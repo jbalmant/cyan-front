@@ -79,7 +79,6 @@ export default function App() {
   const [files, setFiles] = React.useState([]);
   const [positions, setPositions] = React.useState([]);
 
-
   useEffect(() => {
     json("/mock.json").then(files => {
       setFiles(files);
@@ -90,6 +89,10 @@ export default function App() {
   const toogleDrawer = () => {
     setOpen(!open);
   };
+
+  const handleUploadFileClose = () => {
+    setShowModal(false)
+  }
 
   return (
     <div className={classes.root}>
@@ -134,7 +137,7 @@ export default function App() {
         </ListItem>
       </Drawer>
       <main className={clsx(classes.content, { [classes.contentShift]: open, })}>
-        <UploadFile showModal={showModal}></UploadFile>
+        <UploadFile showModal={showModal} onClose={handleUploadFileClose}></UploadFile>
         <Maps positions={positions} />
       </main>
     </div>

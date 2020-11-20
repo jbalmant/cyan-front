@@ -8,20 +8,11 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function UploadFile(props) {
-  const { showModal } = props;
-  const [open, setOpen] = React.useState(false);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  useEffect(() => {
-    setOpen(showModal);
-  }, [showModal]);
+  const { showModal, onClose } = props;
 
   return (
     <div>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <Dialog open={showModal} onClose={onClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Enviar Arquivo</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -37,10 +28,10 @@ export default function UploadFile(props) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={onClose} color="primary">
             Cancelar
           </Button>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={onClose} color="primary">
             Enviar
           </Button>
         </DialogActions>
