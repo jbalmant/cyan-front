@@ -77,7 +77,7 @@ export default function App() {
   const [open, setOpen] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const [files, setFiles] = React.useState([]);
-  const [positions, setPositions] = React.useState();
+  const [positions, setPositions] = React.useState([]);
 
 
   useEffect(() => {

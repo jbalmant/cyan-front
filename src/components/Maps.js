@@ -23,9 +23,8 @@ const Maps = (props) => {
   }, [positions]);
 
   const displayMarkers = () => {
-    if (!positions) {
-      return
-    }
+    if (!positions) return;
+    
     return props.positions.map((store, index) => {
       return <Marker key={index} id={index}
         position={{
@@ -38,6 +37,9 @@ const Maps = (props) => {
 
   const calculateBounds = (positions) => {
     const bounds = new window.google.maps.LatLngBounds();
+
+    if (!positions) return
+
     positions.forEach(p => {
       const { lat, lng } = p;
       const latLng = new window.google.maps.LatLng(lat, lng);
