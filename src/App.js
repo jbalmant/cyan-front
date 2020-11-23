@@ -117,8 +117,8 @@ export default function App() {
           </IconButton>
         </div>
         <Divider />
-        <ListItem button key={'Upload'}>
-          <ListItemIcon><PublishIcon onClick={() => setShowModal(true)}/></ListItemIcon>
+        <ListItem button key={'Upload'} onClick={() => setShowModal(true)}>
+          <ListItemIcon><PublishIcon /></ListItemIcon>
           <ListItemText primary={'Upload'} />
         </ListItem>
         <Divider />
