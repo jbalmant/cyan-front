@@ -8,7 +8,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function UploadFile(props) {
-  const { showModal, onClose } = props;
+  const [filename, setFilename] = React.useState('');
+  const { showModal, onClose, handleSubmit } = props;
 
   return (
     <div>
@@ -25,13 +26,15 @@ export default function UploadFile(props) {
             label="Endereço do arquivo"
             type="text"
             fullWidth
+            value={filename}
+            onChange={e => setFilename(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="primary">
             Cancelar
           </Button>
-          <Button onClick={onClose} color="primary">
+          <Button onClick={() => {handleSubmit(filename)}} color="primary">
             Enviar
           </Button>
         </DialogActions>

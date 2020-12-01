@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Maps from './components/Maps';
+import FileItem from './components/FileItem';
 import UploadFile from './components/UploadFile';
 
 import clsx from 'clsx';
@@ -8,7 +9,6 @@ import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 
-import RoomIcon from '@material-ui/icons/Room'
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -19,7 +19,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PublishIcon from '@material-ui/icons/Publish';
-import { json } from "d3-fetch";
+import API from "./Api";
 
 
 const drawerWidth = 240;
@@ -68,23 +68,48 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     marginRight: 0,
-  },
+  }
 }));
 
 
 export default function App() {
+  let interval = null;
+
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const [files, setFiles] = React.useState([]);
-  const [positions, setPositions] = React.useState([]);
+  const [locations, setLocations] = React.useState([]);
 
   useEffect(() => {
-    json("/mock.json").then(files => {
-      setFiles(files);
-      setPositions(files[0].positions)
-    });
+    // TODO (jbalmant) - Study a better way to do this
+    interval = setInterval(getFiles, 10000)
   }, []);
+
+  const getFiles = () => {
+    API.get('/files').then((data) => {
+      setFiles(data.data)
+    }).catch((err) => {
+      alert(err)
+      console.log(err)
+    })
+  }
+
+  const getLocations = (file_id) => {
+    API.get(`/files/${file_id}/locations`).then((data) => {
+      setLocations(data.data)
+    }).catch((err) => {
+      alert(err)
+      console.log(err)
+    })
+  }
+
+  const handleSubmit = (filename) => {
+    setShowModal(false)
+    API.post(`/files`, { 'path': filename }).then((data) => {
+      getFiles()
+    })
+  }
 
   const toogleDrawer = () => {
     setOpen(!open);
@@ -123,22 +148,31 @@ export default function App() {
         </ListItem>
         <Divider />
         <List>
-          {files.map((file, index) => (
-            <ListItem button onClick={() => setPositions(file.positions)} key={file.name}>
-              <ListItemIcon><RoomIcon /></ListItemIcon>
-              <ListItemText primary={file.name} />
-            </ListItem>
+          {files.filter((f) => f.status == 5).map((file, index) => (
+            <FileItem file={file} handleClick={getLocations}></FileItem>
           ))}
         </List>
         <Divider />
-        <ListItem button key={'Sair'}>
+        <List>
+          {files.filter((f) => { return (f.status > 0 && f.status != 5) }).map((file, index) => (
+            <FileItem file={file} handleClick={getLocations}></FileItem>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          {files.filter((f) => f.status < 0).map((file, index) => (
+            <FileItem file={file} handleClick={getLocations}></FileItem>
+          ))}
+        </List>
+        <Divider />
+        <ListItem button key={'Sair'} onClick={() => alert('No implemented')}>
           <ListItemIcon><ExitToAppIcon /></ListItemIcon>
           <ListItemText primary={'Sair'} />
         </ListItem>
       </Drawer>
       <main className={clsx(classes.content, { [classes.contentShift]: open, })}>
-        <UploadFile showModal={showModal} onClose={handleUploadFileClose}></UploadFile>
-        <Maps positions={positions} />
+        <UploadFile showModal={showModal} onClose={handleUploadFileClose} handleSubmit={handleSubmit}></UploadFile>
+        <Maps positions={locations} />
       </main>
     </div>
   );
